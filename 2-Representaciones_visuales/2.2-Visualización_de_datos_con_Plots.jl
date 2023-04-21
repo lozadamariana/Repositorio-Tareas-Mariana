@@ -133,6 +133,12 @@ Para hacer gráficas de pastel, utilizamos la función `pie(A1,A2)`, donde `A1` 
 # ╔═╡ 4d0558b2-f7b0-402f-899b-b07477083126
 pie(["Windows","Mac","GNU/Linux"],[18,2,4], title="Sistemas operativos utilizados en el grupo")
 
+# ╔═╡ bb473be2-6129-41c1-adb3-65501a42077b
+pie(["Buenas","Regulares","Malas"],[92,8,0], title="Me parece que las clases pregrabadas han sido ...")
+
+# ╔═╡ 9fc277a1-a746-4d80-bdc8-9d7faf6edb21
+pie(["Mucho","Algo","Poco o nada"],[79,21,0], title="En las clases siento que he aprendido ...")
+
 # ╔═╡ 41cdba33-6d38-4c9a-ba36-31a929bf4e96
 md"""## Mapas de calor
 
@@ -1378,6 +1384,8 @@ version = "0.9.1+5"
 # ╠═094abf25-8e17-4f40-837c-082e59b19512
 # ╟─85fd570b-a212-4f6e-9288-6d190209152e
 # ╠═4d0558b2-f7b0-402f-899b-b07477083126
+# ╠═bb473be2-6129-41c1-adb3-65501a42077b
+# ╠═9fc277a1-a746-4d80-bdc8-9d7faf6edb21
 # ╟─41cdba33-6d38-4c9a-ba36-31a929bf4e96
 # ╠═e8dcb3aa-20bd-4d5f-be64-62e38a6a1fe2
 # ╠═6eefbe35-5e13-4818-9935-ac9882ba8fb9
