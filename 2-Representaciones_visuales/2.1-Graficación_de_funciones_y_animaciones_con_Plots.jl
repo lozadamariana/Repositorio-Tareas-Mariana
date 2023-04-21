@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -183,6 +183,16 @@ md""" **Ejercicio** Define un parámetro interactivo `d` que controle el nivel d
 
 """
 
+# ╔═╡ da5d2351-9bab-4ac3-afde-70fbde0c6982
+@bind d2 Slider(0.05:0.05:2, default=0.5)
+
+# ╔═╡ bc9f6737-21ac-4992-9ebe-42fb742f6ebe
+begin
+	plot(sin,-π:d2:π, title = "Funciones Trigonométricas :)", color = "pink", label = "seno")
+	plot!(cos,-π:d2:π, color = "blue", label = "coseno")
+	
+end
+
 # ╔═╡ acfe0334-c7aa-471f-b39e-8276e2e3dd42
 md"""#### El paquete `LaTeXStrings`
 
@@ -284,7 +294,7 @@ Por ejemplo:
 
 """
 
-# ╔═╡ 7c8f914f-ad47-4487-8434-f02f2ce6d9e6
+# ╔═╡ 82fd4386-3860-4714-81bf-99f3684cc6b8
 begin
     R = 0:0.05:2π # Un rango arbitrario para los ejemplos
     contour(R,R,h)
@@ -476,21 +486,71 @@ md"""**Ejercicio** Haz un código donde definas cuatro variables `h`, `r`, `θ` 
 
 Sugerencia: Repasa las ecuaciones cinemáticaticas del tiro parabólico e investiga los atributos `xaxis` y `yaxis` para poder fijar los ejes de la gráfica durante la animación."""
 
-# ╔═╡ 50f7f46b-081e-4b07-94af-1331b33a7c7f
-# Tu código (comentado) va aquí :D
+# ╔═╡ 6b3a600c-5398-4d53-ab94-56b99f21f6a2
+begin
+	
+	h1 = 10
+	r = 8
+	θ = 50
+	t = 15
+
+	vx=r*cos(θ) 	#calculando la velocidad en x
+	vy=r*sin(θ)	 	#calculando la velocidad en y
+  
+	px(x) = vx*x #Calculando la posición en X
+	py(x) = (h1+(vy)*x - ((9.8*r*x^2)/2))   #Calculando la posición en Y
+	p(x) = (px(x), py(x)) #Esta es la función que se graficara (la union de las funciones px,py)
+
+	@gif for t in 0:0.3:6 
+	plot(p.( range(-(10),0, step = 0.3) .+t), legend = false, title = "Tiro parabólico", ls=:dot, lw=5, color = "light blue", xlabel = "Distancia", ylabel = "Altura")
+		scatter!([px(t)],[py(t)]) #Grafica del puntito de las posiciones en px y py 
+							   
+	end
+end
 
 # ╔═╡ 59ec3890-303c-436a-8043-8e6bc9c427ed
 md"**Ejercicio** Crea una función que tome parámetros `h`, `r`, `θ` y `t`, y haga lo descrito en el Ejercicio anterior."
 
-# ╔═╡ c3264b4d-81b1-4e0c-9205-ff818665788c
-# Tu código (comentado) va aquí :D
+# ╔═╡ 0a5b1f96-0393-41f2-b0ae-c6f11900dfca
+begin
+
+	function tiro_p(h1,r,θ, t) #Definimos la función
+	vx=r*cos(θ) 	#calculando la velocidad en x
+	vy=r*sin(θ)	 	#calculando la velocidad en y
+  
+	px(x) = vx*x #Calculando la posición en X
+	py(x) = (h1+(vy)*x - ((9.8*r*x^2)/2))   #Calculando la posición en Y
+	p(x) = (px(x), py(x)) #Esta es la función que se graficara (la union de las funciones px,py)
+        
+	
+	tiro_parabolico = @animate for t in 0:0.3:6 #Animar la gráfica
+	plot(p.( range((-10),0, step = 0.3) .+ t), legend = false,  xlabel = "Distancia", ylabel = "Altura", title = "Tiro Parabólico", ls=:dot, lw=5, color = "pink") #La función dot para línea punteada y lw es el grosor de las lineas 
+		
+	scatter!([px(t)],[py(t)]) #Grafica del puntito de las posiciones en px y py 
+							   end 
+	gif(tiro_parabolico, "Tiro_Parabólico.gif", fps = 10)   #Indica el tiempo que se tarda
+	end
+end
+
+# ╔═╡ e3af0ed2-cd55-49ea-8c94-d13f62f7278d
+tiro_p(690,45,50,35)
 
 # ╔═╡ 77aacd79-26e3-40c2-ac22-f9121aac4155
 md"""**Ejercicio** Crea una animación de cómo la superficie obtenida de la función $h(x,y) = \cos(x) + \sin(y)$ se desplaza hacia el eje Y.
 """
 
-# ╔═╡ 4e68ad0c-17ef-41f7-b9fe-8561415bb7f2
-# Tu código (comentado) va aquí :D
+# ╔═╡ ae0feb7f-188f-41e0-b0ff-f791875ce174
+begin
+	n = 150
+	x = range(0,10,length = n) #rango donde irá x
+	y = x
+	
+	@gif for i in range(0,2π,length = n) 	
+		hn(x,y) = cos(x) + sin(y + 10cos(i))
+		p = plot(x,y,hn, st=:surface)                              
+		default(legend = false, xlabel = "Eje X", ylabel = "Eje y", zlabel = "Eje z", title = L"cos(x) + sin(y)")
+		end
+end
 
 # ╔═╡ 88299b4d-2a7d-4c18-956e-c6e75473c658
 md" ## Recursos complementarios
@@ -520,7 +580,7 @@ PlutoUI = "~0.7.38"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.4"
+julia_version = "1.8.5"
 manifest_format = "2.0"
 project_hash = "77e2734aeac55d5109eeed492b1ea958eae44caf"
 
@@ -1475,6 +1535,8 @@ version = "0.9.1+5"
 # ╠═fc94b6e8-cae9-46bc-9ac4-9cee5e86c8ee
 # ╟─77a60b5d-ad7f-4c44-a68d-694417619668
 # ╟─8b8aff3c-3d88-4022-bc86-b75ebefde2a3
+# ╠═da5d2351-9bab-4ac3-afde-70fbde0c6982
+# ╠═bc9f6737-21ac-4992-9ebe-42fb742f6ebe
 # ╟─acfe0334-c7aa-471f-b39e-8276e2e3dd42
 # ╠═8302701b-02ac-4d35-b7de-5dec8fe701fb
 # ╟─02f9778e-21c8-42db-bed6-95a20d592f22
@@ -1488,7 +1550,7 @@ version = "0.9.1+5"
 # ╟─3910bcbb-0e94-4c70-93c4-106a5fd4006a
 # ╠═d6d981f5-155f-4fa9-8985-ef9a1aa8e28c
 # ╟─cc3f06b5-68b4-40c6-85ce-cb79a7f3a9df
-# ╠═7c8f914f-ad47-4487-8434-f02f2ce6d9e6
+# ╠═82fd4386-3860-4714-81bf-99f3684cc6b8
 # ╟─28bff1c1-4fe1-41ce-92fa-09277a48762b
 # ╠═8af3a0a7-df3b-4204-a806-9c330e636d84
 # ╟─db29912b-936a-4770-9f3b-fcd57a1ffd3a
@@ -1511,11 +1573,12 @@ version = "0.9.1+5"
 # ╠═765a0e10-4217-4a50-8fb1-e46bee83aaa6
 # ╟─abbce622-7912-40ee-8632-261b5129dcb4
 # ╟─7577805b-1d52-47e4-aa45-2652943db1cf
-# ╠═50f7f46b-081e-4b07-94af-1331b33a7c7f
+# ╠═6b3a600c-5398-4d53-ab94-56b99f21f6a2
 # ╟─59ec3890-303c-436a-8043-8e6bc9c427ed
-# ╠═c3264b4d-81b1-4e0c-9205-ff818665788c
+# ╠═0a5b1f96-0393-41f2-b0ae-c6f11900dfca
+# ╠═e3af0ed2-cd55-49ea-8c94-d13f62f7278d
 # ╟─77aacd79-26e3-40c2-ac22-f9121aac4155
-# ╠═4e68ad0c-17ef-41f7-b9fe-8561415bb7f2
+# ╠═ae0feb7f-188f-41e0-b0ff-f791875ce174
 # ╟─88299b4d-2a7d-4c18-956e-c6e75473c658
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
