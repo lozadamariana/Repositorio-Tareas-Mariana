@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -236,12 +236,35 @@ y devuelva el tamaño de paso $h$ correspondiente.
 
 # ╔═╡ 643043b9-ae20-4071-9367-b282f2654fd7
 # Tu código va aquí :)
+begin
+	function tamañoDePaso(t0, tf, N) #declaramos la función
+		h = (tf-t0)/N   #fórmula del tamaño de paso
+		return h #regrese h
+	end
+end
+
+# ╔═╡ da0f5047-cd35-4e49-9038-0f4eec0c80d0
+tdp = tamañoDePaso(0,15,120) 
 
 # ╔═╡ c84d2b95-07a4-45f8-8e7e-e372acc89cb8
 md" **Ejercicio** Crea una función `arregloUniforme` que tome los mismos argumentos que `tamañoDePaso` **más** un argumento `h` para el tamaño de paso y devuelva un arreglo uniforme de números desde `t0` hasta `tf` con dicho tamaño de paso entre ellos. Esta función debe imprimir un mensaje de error si $N$ **no** es un entero positivo. "
 
 # ╔═╡ b0eb99e9-978a-4914-90a9-e05c73115e73
 # Tu código (comentado) va aquí :)
+begin
+	function arregloUniforme(t0, tf, N, h)
+		if N <= 0 #condición de que N debe de ser entero
+			println("Error: debe de ser un número positivo") #imrpima el mensaje de error
+			return
+		end
+		tamanoPaso= (tf-t0)/N #fórmula del tamaño de paso
+		arreglo = collect(range(t0, stop=tf, length=N+1)) #colección del arreglo con rango t0 a tf con tamaño de paso N
+    return arreglo #imprima el arreglo
+	end
+end
+
+# ╔═╡ d0350b7a-9d42-4ea5-8bb4-8cdcdc45b001
+au = arregloUniforme(0, 15, 8, 5)
 
 # ╔═╡ fa999314-0038-498a-ac9e-3ce04a9435a3
 md""" **Ejercicio** Crea una función `paso_euler` que tome argumentos `ti`, `xti`, `g` y `h`, donde
@@ -257,6 +280,15 @@ y devuelva una aproximación de $x(t_{i+1})$.
 
 # ╔═╡ ecf4e2e8-821d-4e32-82d8-5eaec50363c3
 # Tu código (comentado) va aquí :)
+function paso_euler(ti,xti,g,h) #declaramos la función
+	aprox = xti + h*(g(ti,xti)) #sustituimos la fórmula
+end
+
+# ╔═╡ 8161540b-d194-4a78-92df-4d7cb38822ff
+g(t,x) = t + x #declaramos la función
+
+# ╔═╡ d005af17-9531-4975-80d0-3b26bdf010d9
+paso_euler(0,15,g,tdp) 
 
 # ╔═╡ 1ec8d06d-160f-49de-a1aa-25c9d17cce64
 md""" **Ejercicio** Crea una función `euler` que tome argumentos `g`, `xt0` y `t`, donde
@@ -271,6 +303,23 @@ y devuelva un arreglo con `xt0` y los valores aproximados de $x(t_i)$ para $1\le
 
 # ╔═╡ 7c8c2188-3173-4202-8ba4-83554831d940
 # Tu código (comentado) va aquí :)
+begin
+	function euler(g,xt0,t) 	#declaramos la función
+	arreglo=[] 					#creamos un arreglo vacío para guardar las aproximaciones de x 
+	tamaño = length(t) 			#se calcula el tamaño de t y se guarda en la variable tamaño
+	aproximacion = paso_euler(t[1], xt0, g, tdp) #
+	push!(arreglo, aproximacion)
+		
+		for i in 2:1:tamaño #ciclo desde 2 hasta tamaño con paso 1
+		aproximacion = paso_euler(t[i], aproximacion, g, tdp) #En cada iteración del bucle, se llama a la función paso_euler pasando t[i] como ti, la aproximación anterior como xti, g como función g, y un tdp como h. El resultado de paso_euler se almacena en la variable aproximacion
+		push!(arreglo, aproximacion) #Se agrega la primera aproximación al arreglo
+		end
+	   return arreglo #regrese el arreglo
+	end
+end
+
+# ╔═╡ 4ecb11eb-eb19-4099-8706-98e3247d79ab
+euler(g,15,au)
 
 # ╔═╡ 1dc4a3c3-6b1c-4024-bfaf-ce72f5533209
 md"""
@@ -286,6 +335,28 @@ Verifica que tu implementación del método de Euler sea correcta aplicándola a
 # ╔═╡ d821fc74-b60f-4571-bd82-44b4f7ece230
 #= Tu código (comentado) va aquí :)
    También puedes agregar celdas para discutir tus resultados. =#
+begin 
+	function paso_eulerComprobacion(ti,xti,g,h)
+	aprox = xti + h*(g(ti))
+	end
+		function eulerComprobacion(g,xt0,t)
+		arreglo=[]
+		tamaño = length(t)
+		aproximacion = paso_eulerComprobacion(t[1], xt0, g, tdp)
+		push!(arreglo, aproximacion)
+			for i in 2:1:tamaño
+		aprox = paso_eulerComprobacion(t[i], aproximacion, g, tdp)
+		push!(arreglo, aproximacion)
+			end
+			return arreglo
+		end
+end
+
+# ╔═╡ 4fc84e33-1c4f-4737-aa1e-68f450a08916
+p(t)= 4t -1
+
+# ╔═╡ b11edbe4-8c75-462b-a5a0-08f0694cb721
+eulerComprobacion(p, 6, au)
 
 # ╔═╡ c44f5b44-8899-444a-b5c4-f87e98102013
 md""" **Ejercicio** Utiliza tu implementación del método de Euler para solucionar el problema de condiciones iniciales $(1),(2)$. Grafica tu resultado junto con la gráfica de la solución analítica encontrada en el **Ejemplo** de la sección "Condiciones iniciales" y haz interactivo el parámetro $N$ para observar cómo cambia la aproximación que da tu solución numérica de la solución analítica en función del número de puntos utilizados en el intervalo $[t_0,t_f]$. """
@@ -339,7 +410,7 @@ PlutoUI = "~0.7.39"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.4"
+julia_version = "1.8.5"
 manifest_format = "2.0"
 project_hash = "02e70b7d926cc3868981bc53aa675eecda1ec259"
 
@@ -1320,14 +1391,21 @@ version = "0.9.1+5"
 # ╟─858b97dd-c384-49cd-981a-e2a29ffbfb2a
 # ╟─8655c243-679b-46fb-b506-a0b035e902b7
 # ╠═643043b9-ae20-4071-9367-b282f2654fd7
+# ╠═da0f5047-cd35-4e49-9038-0f4eec0c80d0
 # ╟─c84d2b95-07a4-45f8-8e7e-e372acc89cb8
 # ╠═b0eb99e9-978a-4914-90a9-e05c73115e73
+# ╠═d0350b7a-9d42-4ea5-8bb4-8cdcdc45b001
 # ╟─fa999314-0038-498a-ac9e-3ce04a9435a3
 # ╠═ecf4e2e8-821d-4e32-82d8-5eaec50363c3
+# ╠═8161540b-d194-4a78-92df-4d7cb38822ff
+# ╠═d005af17-9531-4975-80d0-3b26bdf010d9
 # ╟─1ec8d06d-160f-49de-a1aa-25c9d17cce64
 # ╠═7c8c2188-3173-4202-8ba4-83554831d940
+# ╠═4ecb11eb-eb19-4099-8706-98e3247d79ab
 # ╟─1dc4a3c3-6b1c-4024-bfaf-ce72f5533209
 # ╠═d821fc74-b60f-4571-bd82-44b4f7ece230
+# ╠═b11edbe4-8c75-462b-a5a0-08f0694cb721
+# ╠═4fc84e33-1c4f-4737-aa1e-68f450a08916
 # ╟─c44f5b44-8899-444a-b5c4-f87e98102013
 # ╠═80b45143-b908-4f89-bb6f-1cb500529ea9
 # ╟─e0081798-1e7e-47b3-a7d2-1d0f29d59990
